@@ -1,0 +1,75 @@
+{
+    "gameLevels": [
+        {
+            "levelId": 0,
+            "AllPieces":[
+                {
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": 0,
+                    "startRotation":270,
+                    "targetRotation":0
+                },{
+                    "piedeId": 0,
+                    "startRotation":0,
+                    "targetRotation":270
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": 0,
+                    "startRotation":180,
+                    "targetRotation":90
+                },{
+                    "piedeId": 0,
+                    "startRotation":90,
+                    "targetRotation":180
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                },{
+                    "piedeId": -1,
+                    "startRotation":0,
+                    "targetRotation":0
+                }
+                
+            ]
+        }
+    ]
+}

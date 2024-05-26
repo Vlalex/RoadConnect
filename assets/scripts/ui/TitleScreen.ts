@@ -3,12 +3,14 @@ const { ccclass, property } = _decorator;
 
 @ccclass('TitleScreen')
 export class TitleScreen extends Component {
-    start() {
 
-    }
+    public onAnimationComplete:() => void = null;
 
-    update(deltaTime: number) {
-        
+    public onTitleAnimationComplete(){
+        if(this.onAnimationComplete != null){
+            this.onAnimationComplete()
+        }
     }
 }
-
+
+

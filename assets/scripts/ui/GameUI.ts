@@ -1,4 +1,4 @@
-import { _decorator, AnimationComponent, Button, Component, Label, Node } from 'cc';
+import { _decorator, animation, AnimationComponent, Button, Component, Label, Node, tween, Vec3 } from 'cc';
 import { SoundLibrary } from '../others/SoundLibrary';
 const { ccclass, property } = _decorator;
 
@@ -15,18 +15,44 @@ export class GameUI extends Component {
     @property(Button)
     public btn_play:Button= null;
 
-    @property(AnimationComponent)
-    public level_header:AnimationComponent = new AnimationComponent();
+    @property(animation.AnimationController)
+    public level_header:animation.AnimationController = null;
 
+    //#region Private
     start() {
         SoundLibrary.instance.playMusic();
-        this.btn_play.node.on(Button.EventType.CLICK, this.onButtonClick, this);
+        this.btn_play.node.on(Button.EventType.CLICK, (button:Button) => {SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick)}, this);
     }
 
-    onButtonClick(button:Button)
-    {
-        SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick)
+    //#endregion
+
+    //#region Public
+    public setLevelName(levelName:string){
+        this.txt_level_name.string = levelName;
     }
+
+    public levelCompleteAnimation(){
+        this.level_header.setValue("LevelComplete", true);
+    }
+
+    public newLevelAnimation(){
+        this.level_header.setValue("NewLevel", true);
+    }
+
+    public AllLevelsCompleteAnimation(){
+        this.txt_level_name.string = "";
+        this.txt_end_game.node.active = false;
+    }
+
+    public buttonPlayAppear(){
+        this.btn_play.node.setScale(0,0,0);
+        this.btn_play.node.active = true;
+        tween(this.btn_play.node).to(0.5, {scale: new Vec3(1,1,1)}, {easing: 'quadInOut'}).start()
+    }
+
+
+    //#endregion
+
 }
 
 
