@@ -1,0 +1,13 @@
+{
+  "name": "ChallengeHTML",
+  "uuid": "0b017c10-490a-4a0b-983d-00876c70f6b9",
+  "creator": {
+    "version": "3.8.3",
+    "registry": {
+      "remote": {}
+    },
+    "dependencies": {
+      "localization-editor": "1.0.3"
+    }
+  }
+}
