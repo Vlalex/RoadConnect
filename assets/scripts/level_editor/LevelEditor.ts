@@ -15,7 +15,7 @@ export class LevelEditor extends Component {
     private m_Columns:number = 4;
     private m_LevelLoaded:boolean = false;
     private m_CurrentMode:LevelEditorMode = LevelEditorMode.Layout;
-    private m_AllButtons:GridButton[] = [];
+    private m_AllButtons:Array<GridButton> = [];
 
     @property({type:Prefab, group:"Nodes"})
     public gridButtonPrefab:Prefab;

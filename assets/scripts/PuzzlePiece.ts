@@ -1,4 +1,4 @@
-import { _decorator, AudioSource, CCInteger, Component, easing, math, Node, Quat, random, randomRange, Sprite, SpriteRenderer, tween, Vec3 } from 'cc';
+import { _decorator, AudioSource, CCInteger, Component, easing, math, Node, Quat, random, randomRange, Sprite, SpriteFrame, SpriteRenderer, tween, Vec3 } from 'cc';
 import { SoundLibrary } from './others/SoundLibrary';
 const { ccclass, property } = _decorator;
 
@@ -17,20 +17,19 @@ export class PuzzlePiece extends Component {
 
     @property(CCInteger)
     public startingRotation:number;
-    @property(CCInteger)
-    public targetRotation:number;
-
-    public onPieceMoved:() => void = null;
+    @property([CCInteger])
+    public targetRotations:number[] = [];
 
     //#region Private
-    onLoad(){
+    onEnable(){
         this.m_Sprite = this.getComponent(Sprite);
         this.m_Audio = this.getComponent(AudioSource);
+        this.node.scale = Vec3.ZERO;
+        tween(this.node).delay(randomRange(0.25,0.75)).to(0.25, {scale: Vec3.ONE}, {easing: 'quadInOut'}).call(() => this.m_Audio.play()).start();
+        this.node.on(Node.EventType.TOUCH_END,this.onMouseUp,this);
     }
 
-    onEnable(){
-        this.node.scale = Vec3.ZERO;
-        tween(this.node).delay(randomRange(0.25,0.75)).to(0.25, {scale: Vec3.ONE}, {easing: 'quadInOut'}).call(() => this.m_Audio.play()).start()
+    start(){
     }
 
     onMouseUp(){
@@ -48,28 +47,69 @@ export class PuzzlePiece extends Component {
         tween(this.node).delay(0.5).to(0.25,{scale: Vec3.ZERO}, {easing: "quadInOut"}).start();
     }
 
-    public init(startingRotation:number, targetRotation:number, sprite:Sprite){
-        this.m_Sprite = sprite;
+    public init(startingRotation:number, targetRotation:number, sprite:SpriteFrame){
+        this.m_Sprite.spriteFrame = sprite;
         this.startingRotation = startingRotation;
-        this.node.eulerAngles = new Vec3(0,0,this.startingRotation);
-        this.targetRotation = targetRotation
-
-        if(sprite.name.search("MR180")){
+        this.node.angle = startingRotation;
+        if(sprite.name.includes("MR180")){
             this.m_IsMirrored = true;
         }
-        else if(sprite.name.search("BN360")){
+        else if(sprite.name.includes("BN360")){
             this.m_IsBonus = true
+        }
+        this.setupRotations(targetRotation)
+    }
+
+    private setupRotations(targetRotation:number){
+
+        if(this.m_IsMirrored){
+            if(targetRotation === 0){
+                this.targetRotations.push(180);
+                this.targetRotations.push(-180);
+            }else if(targetRotation === 90){
+                this.targetRotations.push(-90);
+                this.targetRotations.push(270);
+            }
+            else if(targetRotation === 180){
+
+                this.targetRotations.push(0);
+                this.targetRotations.push(360);
+                this.targetRotations.push(-360);
+            }
+            else if(targetRotation === 270){
+                this.targetRotations.push(90);
+                this.targetRotations.push(-270);
+
+            }
+            return;
+        }
+
+        if(targetRotation === 0){
+            this.targetRotations.push(0);
+            this.targetRotations.push(360);
+            this.targetRotations.push(-360);
+        }else if(targetRotation === 90){
+            this.targetRotations.push(90);
+            this.targetRotations.push(-270);
+        }
+        else if(targetRotation === 180){
+            this.targetRotations.push(180);
+            this.targetRotations.push(-180);
+        }
+        else if(targetRotation === 270){
+            this.targetRotations.push(-90);
+            this.targetRotations.push(270);
         }
     }
 
-    public isOnTargetPosition(){
+    public isOnTargetPosition() : boolean{
         if(this.m_IsBonus)
             return true;
 
-        if(this.m_IsMirrored){
-            if(!math.approx(this.node.eulerAngles.z, this.targetRotation)){
+       /* if(this.m_IsMirrored){
+            if(!math.approx(Math.abs(this.node.angle), this.targetRotation)){
                 var newTarget:number = 0;
-                switch (this.targetRotation) {
+                switch (this.targetRotations) {
                     case 0:
                         newTarget = 180;
                         break;
@@ -83,10 +123,11 @@ export class PuzzlePiece extends Component {
                         newTarget = 90;
                         break;
                 }
-                return math.approx(this.node.eulerAngles.z, newTarget);
+                return math.approx(Math.abs(this.node.angle), newTarget);
             }
-        }
-        return math.approx(this.node.eulerAngles.z, this.targetRotation);
+        }*/
+        //return math.approx(Math.abs(this.node.angle), this.targetRotation);
+        return this.targetRotations.indexOf(this.node.angle) === -1? false:true;
     }
 
     public rotate()
@@ -95,16 +136,17 @@ export class PuzzlePiece extends Component {
             return;
 
         this.m_Rotating = true;
-
-        var rotation = tween(this.node).by(this.ROTATE_SPEED, {rotation: new Quat(0,0, this.node.eulerAngles.z - 90), });
-        var onRotationComplete = tween(this.node).call(() => {
+        
+        tween(this.node).sequence(tween(this.node).to(this.ROTATE_SPEED, {angle: this.node.angle - 90, }).call(() => {
             this.m_Rotating = false;
-            if(this.onPieceMoved != null){
-                this.onPieceMoved();
-            }
-        })
-        tween().sequence(rotation).then(onRotationComplete).start();
+            if(Math.abs(this.node.angle) === 360)
+                this.node.angle = 0;
+            this.node.emit("onPieceMoved");
+        })).start();
+        
         SoundLibrary.instance.playSound(SoundLibrary.SFX.ShapeRotate);
+
+
     }
 
     //#endregion

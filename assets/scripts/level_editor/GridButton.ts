@@ -22,7 +22,7 @@ export class GridButton extends Component {
 
     //#region Private
 
-    onLoad(){
+    onEnable(){
         this.m_Button = this.getComponent(Button);
         this.m_Button.node.on(Button.EventType.CLICK, this.onButtonClick, this);
     }

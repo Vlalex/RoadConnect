@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, JsonAsset, Node, tween, Vec3 } from 'cc';
+import { _decorator, Button, Component, EventKeyboard, Input, input, JsonAsset, KeyCode, Node, tween, Vec3 } from 'cc';
 import { LevelCreatorData } from './level_editor/LevelCreatorData';
 import { PuzzleManager } from './PuzzleManager';
 import { GameUI } from './ui/GameUI';
@@ -16,44 +16,42 @@ export class GameManager extends Component {
     private m_NumberOfLevels:number;
     private m_CurrentLevel:number;
 
-    @property({type:LevelCreatorData, group: "Controller"})
-    public levelCreatorData:LevelCreatorData;
-    @property({type:PuzzleManager, group: "Controller"})
-    public puzzleManager:PuzzleManager;
-    @property({type:GameUI, group: "Controller"})
-    public gameUI:GameUI;
+    @property({type:LevelCreatorData})
+    public levelCreatorData:LevelCreatorData = null;
+    @property({type:PuzzleManager})
+    public puzzleManager:PuzzleManager = null;
+    @property({type:GameUI})
+    public gameUI:GameUI = null;
     
 
-    @property({type:LevelSelectMenu, group: "Screens"})
-    public levelSelect:LevelSelectMenu
-    @property({type:TitleScreen, group: "Screens"})
-    public titleScreen:TitleScreen
+    @property({type:LevelSelectMenu})
+    public levelSelect:LevelSelectMenu = null;
+    @property({type:TitleScreen})
+    public titleScreen:TitleScreen = null;
 
     //#region Private
 
-    onLoad() {
+    onEnable() {
         this.gameUI.btn_menu.node.on(Button.EventType.CLICK,this.onMenuPressed, this);
         this.gameUI.btn_play.node.on(Button.EventType.CLICK,this.onPlayPressed, this);
-        this.puzzleManager.onLevelComplete = this.handleLevelComplete;
-        this.titleScreen.onAnimationComplete = this.handleTItleScreenAnimationComplete;
+        this.puzzleManager.node.on("onLevelComplete",this.handleLevelComplete, this);
+        this.titleScreen.node.on("onAnimationComplete", this.handleTitleScreenAnimationComplete, this);
+        this.levelSelect.node.on("onLevelPressed",this.loadLevel, this);
+        input.on(Input.EventType.KEY_DOWN, (event:EventKeyboard) => {if(event.keyCode == KeyCode.ARROW_DOWN) localStorage.clear();}, this);
     }
 
     start(){
         SoundLibrary.instance.playMusic();
     }
 
-    onEnable(){
-        this.levelSelect.onLevelPressed = this.loadLevel;
-    }
-
     onDisable(){
-        this.levelSelect.onLevelPressed = null;
-        this.puzzleManager.onLevelComplete = null;
-        this.titleScreen.onAnimationComplete = null;
+        this.puzzleManager.node.off("onLevelComplete",this.handleLevelComplete, this);
+        this.titleScreen.node.off("onAnimationComplete", this.handleTitleScreenAnimationComplete, this);
+        this.levelSelect.node.off("onLevelPressed",this.loadLevel, this);
     }
 
     private onMenuPressed(){
-        this.levelSelect.node.active = false;
+        this.levelSelect.node.active = true;
         this.puzzleManager.clearLevel();
         this.populateLevelSelect();
 
@@ -61,25 +59,27 @@ export class GameManager extends Component {
     }
 
     private onPlayPressed(){
+        
         tween(this.gameUI.btn_play.node).to(0.5, {scale: new Vec3(1.1,1.1,1)}, {easing: "bounceIn"}).start();
-        this.schedule(() => {});
+        this.scheduleOnce(this.removeTitleScreen, 0.5);
         this.levelSelect.node.active = true;
-        this.m_NumberOfLevels = this.levelCreatorData.getGameLevels().length;
+        this.m_NumberOfLevels = this.levelCreatorData.levelData.length;
         this.populateLevelSelect();
         SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick);
     }
 
     private loadLevel(levelId:number){
+        this.puzzleManager.clearLevel();
         this.m_CurrentLevel = levelId;
-        this.levelSelect.node.active = true;
+        this.levelSelect.node.active = false;
         this.puzzleManager.populateLevel(this.getLevelWithID(levelId), this.levelCreatorData.levelSprite);
-        this.gameUI.setLevelName("Level" + levelId.toString());
+        this.gameUI.setLevelName("Level " + levelId.toString());
     }
 
     private getLevelWithID(levelID:number) : LevelData{
         var level:LevelData = new LevelData();
 
-        this.levelCreatorData.getGameLevels().forEach((levelData:LevelData) => {
+        this.levelCreatorData.levelData.forEach((levelData:LevelData) => {
             if(levelData.levelID == levelID){
                 level = levelData;
             }
@@ -89,7 +89,8 @@ export class GameManager extends Component {
 
     private populateLevelSelect(){
         this.levelSelect.ClearMenu();
-        this.levelCreatorData.getGameLevels().forEach((level:LevelData) => {
+        this.gameUI.hideEndGameText();
+        this.levelCreatorData.levelData.forEach((level:LevelData) => {
             var unlocked:boolean = this.checkIfLevelIsUnlocked(level.levelID);
             this.levelSelect.addLevel(level.levelID, unlocked);
         });
@@ -109,30 +110,43 @@ export class GameManager extends Component {
         return isUnlocked;
     }
 
-    private handleTItleScreenAnimationComplete(){
-
+    private handleTitleScreenAnimationComplete(){
+        console.log(this.gameUI, this.puzzleManager,this.titleScreen,this.levelSelect);
+        this.gameUI.buttonPlayAppear();
     }
 
     private handleLevelComplete(){
+        this.gameUI.levelCompleteAnimation();
+        this.saveProgress(this.m_CurrentLevel);
 
+        if(!(this.m_CurrentLevel >= (this.m_NumberOfLevels -1))){
+            this.scheduleOnce(this.levelTransition,1.5);
+        }else{
+            this.scheduleOnce(this.endGameAnimation,1.5);
+        }
     }
 
     private saveProgress(levelID:number){
+        //console.log("SAVE GAME");
+        localStorage.setItem(this.LEVEL_KEY + levelID, "1");
+        //console.log(localStorage.getItem(this.LEVEL_KEY + levelID));
 
     }
     //#endregion
 
     //#region Schedulers
     private endGameAnimation(){
-
+        this.gameUI.allLevelsCompleteAnimation();
     }
 
     private levelTransition(){
-
+        this.gameUI.newLevelAnimation();
+        this.m_CurrentLevel++;
+        this.loadLevel(this.m_CurrentLevel);
     }
 
     private removeTitleScreen(){
-
+        this.titleScreen.node.active = false;
     }
     //#endregion
 }

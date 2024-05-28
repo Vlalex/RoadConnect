@@ -39,7 +39,7 @@ export class SoundLibrary extends Component {
 
     //#endregion
 
-    onLoad() {
+    onEnable() {
         if(SoundLibrary.instance === undefined || SoundLibrary.instance === null){
             SoundLibrary.instance = this;
         }

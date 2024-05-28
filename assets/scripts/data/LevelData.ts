@@ -5,7 +5,7 @@ const { ccclass, property } = _decorator;
 @ccclass('LevelData')
 export class LevelData{
     public levelID:number;
-    public allPieces:PieceData[] = [];
+    public allPieces:Array<PieceData> = [];
 }
 
 

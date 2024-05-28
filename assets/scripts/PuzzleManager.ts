@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate, Node, Prefab, Sprite, SpriteRenderer, Vec2, Vec3 } from 'cc';
+import { _decorator, Canvas, Component, instantiate, Node, Prefab, Sprite, SpriteFrame, SpriteRenderer, UITransform, Vec2, Vec3 } from 'cc';
 import { PuzzlePiece } from './PuzzlePiece';
 import { SoundLibrary } from './others/SoundLibrary';
 import { LevelData } from './data/LevelData';
@@ -10,21 +10,24 @@ export class PuzzleManager extends Component {
 
     private readonly PUZZLE_SIZE = 4;
 
-    private m_StartingPuzzleArea:Vec2 = new Vec2(-1.5,2.5);
+    private m_StartingPuzzleArea:Vec2 = new Vec2(-288,480);
 
     @property([PuzzlePiece])
-    public allPieces:PuzzlePiece[] = [];
+    public allPieces:Array<PuzzlePiece> = [];
     
     @property(Prefab)
     public piecePrefab:Prefab;
 
-    public onLevelComplete:() => void;
+    @property(Node)
+    public canvas:Node = null;
 
     //#region Private
 
     private checkForLevelComplete(){
+        console.log("CHECK FOR LEVEL COMPLETE");
         for (let i = 0; i < this.allPieces.length; i++) {
             if(!this.allPieces[i].isOnTargetPosition()){
+                console.log("ONE IS MISSING: ", this.allPieces[i].name, " is ", this.allPieces[i].isOnTargetPosition());
                 return;
             }
         }
@@ -33,20 +36,19 @@ export class PuzzleManager extends Component {
     }
 
     private levelComplete(){
+        console.log("LEVEL COMPLETED");
         SoundLibrary.instance.playSound(SoundLibrary.SFX.LevelComplete, 0.5);
 
         this.allPieces.forEach((piece:PuzzlePiece) => {
             piece.disappear();
         });
 
-        if(this.onLevelComplete != null){
-            this.onLevelComplete();
-        }
+        this.node.emit("onLevelComplete");
     }
 
     onDisable() {
         this.allPieces.forEach((piece:PuzzlePiece) => {
-            piece.onPieceMoved = null;
+            piece.node.off("onPieceMoved", this.checkForLevelComplete,this);
         });
     }
 
@@ -54,25 +56,27 @@ export class PuzzleManager extends Component {
 
     //#region Public
     public clearLevel(){
-        this.allPieces.forEach(pieces => {
-            pieces.node.destroy();
+        this.allPieces.forEach(piece => {
+            piece.node.destroy();
         });
 
         this.allPieces = [];
     }
 
-    public populateLevel(level:LevelData, levelSprites:Sprite[]){
-        var newPiece: PuzzlePiece;
+    public populateLevel(level:LevelData, levelSprites:Array<SpriteFrame>){
         var hCount:number = 0;
         var vCount:number = 0;
 
         level.allPieces.forEach((piece:PieceData) => {
             if(piece.pieceID != -1){
-                newPiece = instantiate(this.piecePrefab).getComponent(PuzzlePiece);
-                newPiece.node.position = new Vec3(this.m_StartingPuzzleArea.x + hCount, this.m_StartingPuzzleArea.y - vCount, 0);
+                var newPiece:PuzzlePiece = instantiate(this.piecePrefab).getComponent(PuzzlePiece);
+                var pieceContentSize = newPiece.getComponent(UITransform).contentSize;
+                newPiece.node.setParent(this.canvas);
+                newPiece.node.position = new Vec3(this.m_StartingPuzzleArea.x + (hCount * pieceContentSize.x), this.m_StartingPuzzleArea.y - (vCount * pieceContentSize.y), 0);
                 newPiece.init(piece.startRotation, piece.targetRotation, levelSprites[piece.pieceID]);
-                newPiece.onPieceMoved = this.checkForLevelComplete;
-                newPiece.name = "Piece " + hCount + vCount;
+                newPiece.node.on("onPieceMoved", this.checkForLevelComplete,this);
+                newPiece.node.name = "Piece " + hCount.toString() + vCount.toString();
+                newPiece.name = "Piece " + hCount.toString() + vCount.toString();
                 this.allPieces.push(newPiece);
             }
 

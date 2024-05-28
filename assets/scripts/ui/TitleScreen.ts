@@ -1,15 +1,18 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, animation, AnimationClip, Component, Node, Animation } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('TitleScreen')
 export class TitleScreen extends Component {
 
-    public onAnimationComplete:() => void = null;
+    start(): void {
+        let animation = this.node.getComponent(Animation);
+        animation.on(Animation.EventType.FINISHED, this.onTitleAnimationComplete, this);
+        animation.play();
+    }
 
     public onTitleAnimationComplete(){
-        if(this.onAnimationComplete != null){
-            this.onAnimationComplete()
-        }
+        this.getComponent(Animation).off(Animation.EventType.FINISHED, this.onTitleAnimationComplete, this);
+        this.node.emit("onAnimationComplete");
     }
 }
 

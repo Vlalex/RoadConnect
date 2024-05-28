@@ -22,11 +22,17 @@ export class GameUI extends Component {
     start() {
         SoundLibrary.instance.playMusic();
         this.btn_play.node.on(Button.EventType.CLICK, (button:Button) => {SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick)}, this);
+        this.txt_end_game.node.active = false;
     }
 
     //#endregion
 
     //#region Public
+
+    public hideEndGameText(){
+        this.txt_end_game.node.active = false;
+    }
+
     public setLevelName(levelName:string){
         this.txt_level_name.string = levelName;
     }
@@ -39,9 +45,9 @@ export class GameUI extends Component {
         this.level_header.setValue("NewLevel", true);
     }
 
-    public AllLevelsCompleteAnimation(){
+    public allLevelsCompleteAnimation(){
         this.txt_level_name.string = "";
-        this.txt_end_game.node.active = false;
+        this.txt_end_game.node.active = true;
     }
 
     public buttonPlayAppear(){

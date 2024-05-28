@@ -12,30 +12,34 @@ export class LevelSelectMenu extends Component {
     public buttonGrid:Node = null;
 
     @property([Button])
-    public allButtons:Button[] = [];
-
-    public onLevelPressed:(int:number) => void = null;
+    public allButtons:Array<Button> = [];
 
     public addLevel(levelID: number, unlocked:boolean){
-        var newLevel:Button = instantiate(this.levelSelectButtonPrefab).getComponent(Button);
-        newLevel.node.setParent(this.buttonGrid);
-
+        var newLevel:Node = instantiate(this.levelSelectButtonPrefab)
+        var newButton:Button = newLevel.getComponent(Button);
+        newLevel.setParent(this.buttonGrid);
         newLevel.name = "Level" + levelID + 1;
         newLevel.getComponentInChildren(Label).string = (levelID + 1).toString();
-        newLevel.node.on(Button.EventType.CLICK, () => {
-            this.onLevelPressed(levelID);
+        
+        newLevel.on(Button.EventType.CLICK, () => {
+            this.node.emit("onLevelPressed", levelID);
             SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick);
         }, true);
 
-        this.allButtons.push(newLevel);
+        if(this.allButtons === null)
+            this.allButtons = new Array<Button>(0);
+        this.allButtons.push(newButton);
+
         if(!unlocked){
-            newLevel.interactable = false;
-            newLevel.getComponent(Sprite).color = Color.GRAY;
+            newButton.interactable = false;
+            //newLevel.getComponent(Sprite).color = Color.GRAY;
         }
     }
 
     public ClearMenu(){
-        this.allButtons.forEach((v) => {v.destroy();});
+        if(this.allButtons == null)
+            return;
+        this.allButtons.forEach((v) => {v.node.destroy();});
         this.allButtons = [];
     }
 }
