@@ -17,6 +17,7 @@ export class Preloader extends Component {
         }else
         {
             GamePreferences.loadPreferences();
+            this.startGame();
         }
         
     }

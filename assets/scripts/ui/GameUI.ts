@@ -15,14 +15,20 @@ export class GameUI extends Component {
     @property(Button)
     public btn_play:Button= null;
 
-    @property(animation.AnimationController)
-    public level_header:animation.AnimationController = null;
+    @property(AnimationComponent)
+    public level_header:AnimationComponent = null;
 
     //#region Private
     start() {
         SoundLibrary.instance.playMusic();
         this.btn_play.node.on(Button.EventType.CLICK, (button:Button) => {SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick)}, this);
+        
         this.txt_end_game.node.active = false;
+    }
+
+    private resetToIdle(){
+        this.level_header.off(AnimationComponent.EventType.FINISHED, this.resetToIdle, this);
+        this.level_header.play("Idle");
     }
 
     //#endregion
@@ -38,16 +44,19 @@ export class GameUI extends Component {
     }
 
     public levelCompleteAnimation(){
-        this.level_header.setValue("LevelComplete", true);
+        this.level_header.play("LevelComplete");
+        this.level_header.on(AnimationComponent.EventType.FINISHED, this.resetToIdle, this);
     }
 
     public newLevelAnimation(){
-        this.level_header.setValue("NewLevel", true);
+        this.level_header.play("NewLevel");
+        this.level_header.on(AnimationComponent.EventType.FINISHED, this.resetToIdle, this);
     }
 
     public allLevelsCompleteAnimation(){
         this.txt_level_name.string = "";
         this.txt_end_game.node.active = true;
+        this.txt_end_game.getComponent(AnimationComponent).play();
     }
 
     public buttonPlayAppear(){
