@@ -8,3 +8,7 @@ All the animations are either made with the Animation system and the tween syste
 The system that checks for all the pieces rotation has been changed to accept the Angle property of CC Nodes and changed for a system implementing posible values for each posible rotation.
 
 The coroutine system also had to be replace for the Scheduler system, it requiered some finesse.
+
+Multi-language is done.
+
+Multiresolution was attempted but there wasn't enough time for testing and making a portraint/landscape mode.
