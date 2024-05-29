@@ -61,8 +61,9 @@ export class GameManager extends Component {
     }
 
     private onPlayPressed(){
+        this.gameUI.hideEndGameText();
         
-        tween(this.gameUI.btn_play.node).to(0.5, {scale: new Vec3(1.1,1.1,1)}, {easing: "bounceIn"}).start();
+        //tween(this.gameUI.btn_play.node).to(0.5, {scale: new Vec3(1.1,1.1,1)}, {easing: "bounceIn"}).start();
         this.scheduleOnce(this.removeTitleScreen, 0.5);
         this.levelSelect.node.active = true;
         this.m_NumberOfLevels = this.levelCreatorData.levelData.length;
@@ -90,8 +91,8 @@ export class GameManager extends Component {
     }
 
     private populateLevelSelect(){
-        this.levelSelect.ClearMenu();
         this.gameUI.hideEndGameText();
+        this.levelSelect.ClearMenu();
         this.levelCreatorData.levelData.forEach((level:LevelData) => {
             var unlocked:boolean = this.checkIfLevelIsUnlocked(level.levelID);
             this.levelSelect.addLevel(level.levelID, unlocked);

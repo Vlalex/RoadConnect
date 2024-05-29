@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Scene } from 'cc';
+import { _decorator, Component, director, math, Node, Scene, screen, Vec2 } from 'cc';
 import { GamePreferences } from './GamePreferences';
 import { SceneController } from '../utils/SceneController';
 const { ccclass, property } = _decorator;
@@ -17,9 +17,13 @@ export class Preloader extends Component {
         }else
         {
             GamePreferences.loadPreferences();
-            this.startGame();
         }
-        
+
+        if(screen.supportsFullScreen)
+            screen.fullScreen();
+
+        if(screenX > screenY)
+            screen.windowSize = math.size(1920,1080);
     }
 
     private startGame(){

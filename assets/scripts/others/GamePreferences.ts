@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, director, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('GamePreferences')
@@ -43,21 +43,28 @@ export class GamePreferences extends Component {
     
     //#endregion
 
+    protected onEnable(): void {
+        director.addPersistRootNode(this.node);
+    }
+
     //#region Public Methods
 
     public static savePreferences(){
+        console.log("SAVE PREFENCES");
         localStorage.setItem(this.SoundKey, this.SoundOn? "1": "0");
         localStorage.setItem(this.MusicKey, this.MusicOn? "1": "0");
         localStorage.setItem(this.LanguageKey, this.Language);
     }
 
     public static loadPreferences(){
+        console.log("LOAD PREFENCES");
         this.SoundOn = localStorage.getItem(this.SoundKey) === "1"? true: false;
         this.MusicOn = localStorage.getItem(this.MusicKey) === "1"? true: false;
         this.Language = localStorage.getItem(this.LanguageKey);
     }
 
     public static saveInitialPreferences(){
+        console.log("SAVE INITIAL PREFENCES");
         localStorage.setItem(this.SoundKey, "1");
         localStorage.setItem(this.MusicKey, "1");
         localStorage.setItem(this.LanguageKey, "en");

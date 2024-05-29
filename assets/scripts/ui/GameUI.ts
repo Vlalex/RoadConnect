@@ -20,9 +20,8 @@ export class GameUI extends Component {
 
     //#region Private
     start() {
-        SoundLibrary.instance.playMusic();
-        this.btn_play.node.on(Button.EventType.CLICK, (button:Button) => {SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick)}, this);
         
+        this.btn_play.node.on(Button.EventType.CLICK, (button:Button) => {SoundLibrary.instance.playSound(SoundLibrary.SFX.DefaultClick)}, this);
         this.txt_end_game.node.active = false;
     }
 
