@@ -10,7 +10,7 @@ export class PuzzleManager extends Component {
 
     private readonly PUZZLE_SIZE = 4;
 
-    private m_StartingPuzzleArea:Vec2 = new Vec2(-288,480);
+    private m_StartingPuzzleArea:Vec2 = new Vec2(((144*1.5)*-1),(144*2.5));
 
     @property([PuzzlePiece])
     public allPieces:Array<PuzzlePiece> = [];

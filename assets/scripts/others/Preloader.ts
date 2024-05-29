@@ -19,11 +19,11 @@ export class Preloader extends Component {
             GamePreferences.loadPreferences();
         }
 
-        if(screen.supportsFullScreen)
+        /*if(screen.supportsFullScreen)
             screen.fullScreen();
 
         if(screenX > screenY)
-            screen.windowSize = math.size(1920,1080);
+            screen.windowSize = math.size(1920,1080);*/
     }
 
     private startGame(){

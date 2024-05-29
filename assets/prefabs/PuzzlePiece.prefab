@@ -82,8 +82,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 192,
-      "height": 192
+      "width": 144,
+      "height": 144
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -153,6 +153,7 @@
     "__prefab": {
       "__id__": 7
     },
+    "targetRotations": [],
     "_id": ""
   },
   {
@@ -209,8 +210,8 @@
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 192,
-      "height": 192
+      "width": 144,
+      "height": 144
     },
     "_id": ""
   },
@@ -226,6 +227,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "c6zPUOCgpB7aNY2g84rVXw"
+    "fileId": "c6zPUOCgpB7aNY2g84rVXw",
+    "targetOverrides": null
   }
 ]
