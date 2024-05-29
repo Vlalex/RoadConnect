@@ -6,6 +6,8 @@ import { LevelSelectMenu } from './LevelSelectMenu';
 import { TitleScreen } from './ui/TitleScreen';
 import { SoundLibrary } from './others/SoundLibrary';
 import { LevelData } from './data/LevelData';
+import { LanguageManager } from './utils/LanguageManager';
+import { GamePreferences } from './others/GamePreferences';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameManager')
@@ -73,7 +75,7 @@ export class GameManager extends Component {
         this.m_CurrentLevel = levelId;
         this.levelSelect.node.active = false;
         this.puzzleManager.populateLevel(this.getLevelWithID(levelId), this.levelCreatorData.levelSprite);
-        this.gameUI.setLevelName("Level " + levelId.toString());
+        this.gameUI.setLevelName(LanguageManager.instance.getText("level") + " " + levelId.toString());
     }
 
     private getLevelWithID(levelID:number) : LevelData{
@@ -112,6 +114,7 @@ export class GameManager extends Component {
 
     private handleTitleScreenAnimationComplete(){
         console.log(this.gameUI, this.puzzleManager,this.titleScreen,this.levelSelect);
+        LanguageManager.instance.setupTexts(GamePreferences.Language);
         this.gameUI.buttonPlayAppear();
     }
 

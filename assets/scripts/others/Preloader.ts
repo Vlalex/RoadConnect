@@ -21,8 +21,25 @@ export class Preloader extends Component {
         
     }
 
-    start() {
+    private startGame(){
         SceneController.requestLoadScene(SceneController.GameScene.Main);
+    }
+
+    public onLanguageButtonPressed(event:Event, language:string){
+        //console.log(language)
+        switch (language) {
+            case "English":
+                GamePreferences.Language = "en";
+                break;
+            case "Español":
+                GamePreferences.Language = "es";
+                break;
+            case "Italiano":
+                GamePreferences.Language = "it";
+                break;
+        }
+        GamePreferences.savePreferences();
+        this.startGame();
     }
     //#endregion
 }

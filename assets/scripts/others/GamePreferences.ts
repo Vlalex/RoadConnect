@@ -8,8 +8,11 @@ export class GamePreferences extends Component {
 
     static readonly MusicKey = "Music";
 
+    static readonly LanguageKey = "Language";
+
     private static soundOn:boolean = true;
     private static musicOn:boolean = true;
+    private static language:string = "en";
 
 
     //#region Propierties
@@ -29,6 +32,14 @@ export class GamePreferences extends Component {
     public static set MusicOn(v : boolean) {
         this.musicOn = v;
     }
+
+    public static get Language() : string {
+        return this.language;
+    }
+
+    public static set Language(v : string) {
+        this.language = v;
+    }
     
     //#endregion
 
@@ -37,16 +48,19 @@ export class GamePreferences extends Component {
     public static savePreferences(){
         localStorage.setItem(this.SoundKey, this.SoundOn? "1": "0");
         localStorage.setItem(this.MusicKey, this.MusicOn? "1": "0");
+        localStorage.setItem(this.LanguageKey, this.Language);
     }
 
     public static loadPreferences(){
         this.SoundOn = localStorage.getItem(this.SoundKey) === "1"? true: false;
         this.MusicOn = localStorage.getItem(this.MusicKey) === "1"? true: false;
+        this.Language = localStorage.getItem(this.LanguageKey);
     }
 
     public static saveInitialPreferences(){
         localStorage.setItem(this.SoundKey, "1");
         localStorage.setItem(this.MusicKey, "1");
+        localStorage.setItem(this.LanguageKey, "en");
     }
     //#endregion
 

@@ -1,0 +1,23 @@
+[
+    {
+        "languageId":"en",
+        "levelText":"Level",
+        "levelSelectText":"Level Select",
+        "endText":"ALL\n\nLEVELS\n\nCLEARED!\n\n=)",
+        "playButtonText":"Play"
+    },
+    {
+        "languageId":"es",
+        "levelText":"Nivel",
+        "levelSelectText":"Seleccionar Nivel",
+        "endText":"TODOS\n\nLOS NIVELES\n\nTERMINADOS!\n\n=)",
+        "playButtonText":"Jugar"
+    },
+    {
+        "languageId":"it",
+        "levelText":"Livello",
+        "levelSelectText":"Selezione del Livello",
+        "endText":"TUTTI\n\nI LIVELLI\n\nFINITI!\n\n=)",
+        "playButtonText":"Giocare"
+    }
+]
