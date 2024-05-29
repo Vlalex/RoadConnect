@@ -31,15 +31,15 @@ export class Preloader extends Component {
     }
 
     public onLanguageButtonPressed(event:Event, language:string){
-        //console.log(language)
+        console.log("CUSTOM DATA",language);
         switch (language) {
-            case "English":
+            case "en":
                 GamePreferences.Language = "en";
                 break;
-            case "Español":
+            case "es":
                 GamePreferences.Language = "es";
                 break;
-            case "Italiano":
+            case "it":
                 GamePreferences.Language = "it";
                 break;
         }

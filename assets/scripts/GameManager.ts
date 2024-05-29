@@ -34,12 +34,13 @@ export class GameManager extends Component {
     //#region Private
 
     onEnable() {
+        console.log("SAVED LANGUAGE: ", GamePreferences.Language);
         this.gameUI.btn_menu.node.on(Button.EventType.CLICK,this.onMenuPressed, this);
         this.gameUI.btn_play.node.on(Button.EventType.CLICK,this.onPlayPressed, this);
         this.puzzleManager.node.on("onLevelComplete",this.handleLevelComplete, this);
         this.titleScreen.node.on("onAnimationComplete", this.handleTitleScreenAnimationComplete, this);
         this.levelSelect.node.on("onLevelPressed",this.loadLevel, this);
-        input.on(Input.EventType.KEY_DOWN, (event:EventKeyboard) => {if(event.keyCode == KeyCode.ARROW_DOWN) localStorage.clear();}, this);
+        input.on(Input.EventType.KEY_DOWN, (event:EventKeyboard) => {if(event.keyCode == KeyCode.ARROW_DOWN) console.log("STORAGE CLEAR");localStorage.clear();}, this);
     }
 
     start(){

@@ -50,7 +50,7 @@ export class GamePreferences extends Component {
     //#region Public Methods
 
     public static savePreferences(){
-        console.log("SAVE PREFENCES");
+        console.log("SAVE PREFENCES: ", this.Language);
         localStorage.setItem(this.SoundKey, this.SoundOn? "1": "0");
         localStorage.setItem(this.MusicKey, this.MusicOn? "1": "0");
         localStorage.setItem(this.LanguageKey, this.Language);
